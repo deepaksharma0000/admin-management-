@@ -12,6 +12,15 @@ const dotenv = require('dotenv');
 const user = require('../models/user');
 dotenv.config();
 
+const radis = require('../config/radis');
+const cache = await radis.get('masters');
+if (cache) {
+    return res.json(JSON.parse(cache));
+}
+const masters = await User.find();
+await radis.set('masters', JSON.stringify(masters), 'EX', 3600);
+res.json(masters);
+
 
 
 router.post('/login', async (req, res) => {
